@@ -5,12 +5,14 @@ using Rewired;
 
 public class FrogController : MonoBehaviour {
 
-	public GameObject groundCheckObj, arrow, tongue, tongueAnchor;
+	public GameObject groundCheckLeftObj, groundCheckRightObj, arrow, tongue, tongueAnchor;
 	public float startForce, maxForce, timeToMax, timeToForceJump;
 	public float maxTongueScale, timeToTongue;
 	private float chargeStartTime, jumpDeltaTime, x, y;
 	private float tongueStartTime, tongueDeltaTime;
 	private SpriteRenderer arrowSprender, frogSprender;
+	private bool groundedLeft = false;
+	private bool groundedRight = false;
 	private bool grounded = false;
 	private bool isCharging = false;
 	private bool isTounging = false;
@@ -27,7 +29,7 @@ public class FrogController : MonoBehaviour {
 
 	private bool facingRight = true;
 
-	private Transform groundCheck;
+	private Transform groundCheckLeft, groundCheckRight;
 	private Rigidbody2D rb;
 
 	private Vector3 arrowScale;
@@ -40,7 +42,8 @@ public class FrogController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		groundCheck = groundCheckObj.transform;
+		groundCheckLeft = groundCheckLeftObj.transform;
+		groundCheckRight = groundCheckRightObj.transform;
 		rb = gameObject.GetComponent<Rigidbody2D>();
 		arrowSprender = arrow.GetComponent<SpriteRenderer>();
 		frogSprender = gameObject.GetComponent<SpriteRenderer>();
@@ -53,7 +56,7 @@ public class FrogController : MonoBehaviour {
 		tongueBoxCollider = tongue.GetComponent<BoxCollider2D>();
 	}
 	
-	void FixedUpdate () {
+	void Update() {
 
 		if(facingRight && rb.velocity.x < 0){
 			facingRight = false;
@@ -81,8 +84,10 @@ public class FrogController : MonoBehaviour {
 		jumpReleased = player.GetButtonUp("Jump");
 		tonguePressed = player.GetButtonDown("Tongue");
 
-		grounded = Physics2D.Linecast(gameObject.transform.position, groundCheck.position, (1 << LayerMask.NameToLayer("floor")) | (1<<LayerMask.NameToLayer("wall")));
-		
+		groundedLeft = Physics2D.Linecast(gameObject.transform.position, groundCheckLeft.position, (1 << LayerMask.NameToLayer("floor")) | (1<<LayerMask.NameToLayer("wall")));
+		groundedRight = Physics2D.Linecast(gameObject.transform.position, groundCheckRight.position, (1 << LayerMask.NameToLayer("floor")) | (1<<LayerMask.NameToLayer("wall")));
+		grounded = (groundedLeft || groundedRight);
+
 		if(jumpPressed && grounded && !isCharging){
 			chargeStartTime = Time.time;
 			isCharging = true;
