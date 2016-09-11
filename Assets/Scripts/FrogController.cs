@@ -16,7 +16,7 @@ public class FrogController : MonoBehaviour {
 	private bool groundedRight = false;
 	private bool grounded = false;
 	private bool isCharging = false;
-	private bool isTounging = false;
+	private bool isTonguing = false;
 
 	private bool isDeathTouch = false;
 
@@ -105,16 +105,16 @@ public class FrogController : MonoBehaviour {
 			charging();
 		}
 
-		if(tonguePressed && !isTounging && !isDeathTouch && !isCharging){
-			isTounging = true;
+		if(tonguePressed && !isTonguing && !isDeathTouch && !isCharging){
+			isTonguing = true;
 			tongueStartTime = Time.time;
-			tongue.GetComponent<SpriteRenderer>().enabled = true;
+			tongueSprender.enabled = true;
 			tongueBoxCollider.enabled = true;
 			tongueTheta = (Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg);
 			tongue.transform.eulerAngles = new Vector3(0.0f, 0.0f, tongueTheta);
 		}
 
-		if (isTounging){
+		if (isTonguing){
 			tongueExtend();
 		}
 	}
@@ -170,7 +170,7 @@ public class FrogController : MonoBehaviour {
 		tongue.transform.position = (tongueAnchor.transform.position + new Vector3(tongueX, tongueY, 0.0f));
 
 		if(tongueDeltaTime/timeToTongue > 1){
-			isTounging = false;
+			isTonguing = false;
 			tongueBoxCollider.enabled = false;
 			tongueSprender.enabled = false;
 			tongue.transform.localScale = Vector3.one;
@@ -252,5 +252,23 @@ public class FrogController : MonoBehaviour {
 		return playerId;
 	}
 
+	public bool CanTongue(){
+		return (tonguePressed && !isTonguing && !isDeathTouch && !isCharging);
+	}
 
+	public float GetMaxTongueScale(){
+		return maxTongueScale;
+	}
+
+	public float GetTimeToTongue(){
+		return timeToTongue;
+	}
+
+	public float GetTongueTheta(){
+		return tongueTheta;
+	}
+
+	public Vector3 GetTongueAnchorPosition(){
+		return tongueAnchor.transform.localPosition;
+	}
 }

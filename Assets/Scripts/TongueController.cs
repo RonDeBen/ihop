@@ -12,8 +12,10 @@ public class TongueController : MonoBehaviour {
 	private int playerId;
 
 	void Start(){
-		FC = frog.GetComponent<FrogController>();
-		playerId = FC.GetPlayerId();
+		if(frog != null){
+			FC = frog.GetComponent<FrogController>();
+			playerId = FC.GetPlayerId();
+		}
 	}
 
 	void OnTriggerEnter2D(Collider2D coll){
@@ -38,5 +40,11 @@ public class TongueController : MonoBehaviour {
 
 	public GameObject GetFrog(){
 		return frog;
+	}
+
+	public void SetFrog(GameObject frog){
+		this.frog = frog;
+		FC = frog.GetComponent<FrogController>();
+		playerId = FC.GetPlayerId();
 	}
 }

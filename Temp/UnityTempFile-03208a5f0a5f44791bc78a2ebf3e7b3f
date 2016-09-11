@@ -131,6 +131,8 @@
 'Assets/Scripts/FlyController.cs'
 'Assets/Scripts/FlySpawner.cs'
 'Assets/Scripts/FrogController.cs'
+'Assets/Scripts/FrogGhost.cs'
+'Assets/Scripts/FrogWorldWrap.cs'
 'Assets/Scripts/TongueController.cs'
 -r:'/Applications/Unity/Unity.app/Contents/Frameworks/Mono/lib/mono/unity/System.Runtime.Serialization.dll'
 -r:'/Applications/Unity/Unity.app/Contents/Frameworks/Mono/lib/mono/unity/System.Xml.Linq.dll'

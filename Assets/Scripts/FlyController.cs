@@ -71,7 +71,6 @@ public class FlyController : MonoBehaviour {
 	void OnCollisionEnter2D(Collision2D coll){
 		if (coll.gameObject.tag == "Tongue"){
 			coll.gameObject.GetComponent<TongueController>();
-
 		}
 	}
 
