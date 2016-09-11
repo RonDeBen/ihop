@@ -5,6 +5,8 @@ using Rewired;
 
 public class FrogController : MonoBehaviour {
 
+	public Sprite idleSprite, tongueSprite, jumpSprite, jumpTongueSprite, deathIdleSprite, deathJumpSprite;
+
 	public GameObject groundCheckLeftObj, groundCheckRightObj, arrow, tongue, tongueAnchor, arrowAnchor;
 	public float startForce, maxForce, timeToMax, timeToForceJump;
 	public float maxTongueScale, timeToTongue;
@@ -43,6 +45,8 @@ public class FrogController : MonoBehaviour {
 	private float tongueTheta;
 	private BoxCollider2D tongueBoxCollider;
 
+	public FrogGhost[] ghosts;
+
 	// Use this for initialization
 	void Start () {
 		groundCheckLeft = groundCheckLeftObj.transform;
@@ -70,6 +74,28 @@ public class FrogController : MonoBehaviour {
 			facingRight = true;
 			frogSprender.flipX = true;
 			tongueAnchor.transform.localPosition = Vector3.Scale(tongueAnchor.transform.localPosition, Vector3.left);
+		}
+
+		if(grounded){
+			if(isTonguing){
+				frogSprender.sprite = tongueSprite;
+			}else{
+				frogSprender.sprite = idleSprite;
+			}
+		}else{
+			if(isTonguing){
+				if(isDeathTouch){
+					frogSprender.sprite = deathJumpSprite;
+				}else{
+					frogSprender.sprite = jumpTongueSprite;
+				}
+			}else{
+				if(isDeathTouch){
+					frogSprender.sprite = deathJumpSprite;
+				}else{
+					frogSprender.sprite = jumpSprite;
+				}
+			}
 		}
 
 		x = player.GetAxis("Move Horizontal");
@@ -180,24 +206,35 @@ public class FrogController : MonoBehaviour {
 
 	public void EnterDeathTouch(){
 		gameObject.layer = LayerMask.NameToLayer("death touch");
+		gameObject.tag = "Death Touch";
 		isDeathTouch = true;
 		frogSprender.color = new Color(153, 50, 204, 255);
+		SetGhostDeathTouch(true);
 		//change to whatever animation thing
 	}
 
 	public void ExitDeathTouch(){
 		gameObject.layer = LayerMask.NameToLayer("frog");
+		gameObject.tag = "Frog";
 		isDeathTouch = false;
 		frogSprender.color = Color.white;
+		SetGhostDeathTouch(false);
 		//go back to whatever animation thing
 	}
 
 	void OnCollisionEnter2D(Collision2D other){
-		if(isDeathTouch && other.gameObject.tag.Equals("Frog")){
-			other.gameObject.GetComponent<FrogController>().DestroyAllFlies();
-			Destroy(other.gameObject);
-			DestroyAllFlies();
-			ExitDeathTouch();
+		if(isDeathTouch){
+			if(other.gameObject.tag.Equals("Frog")){
+				other.gameObject.GetComponent<FrogController>().DestroyAllFlies();
+				Destroy(other.gameObject);
+				DestroyAllFlies();
+				ExitDeathTouch();
+			}else if(other.gameObject.tag.Equals("Death Touch")){
+				ExitDeathTouch();
+				other.gameObject.GetComponent<FrogController>().ExitDeathTouch();
+				other.gameObject.GetComponent<FrogController>().DestroyAllFlies();
+				DestroyAllFlies();
+			}
 		}
 	}
 
@@ -270,5 +307,20 @@ public class FrogController : MonoBehaviour {
 
 	public Vector3 GetTongueAnchorPosition(){
 		return tongueAnchor.transform.localPosition;
+	}
+
+	public void TeleportFlies(){
+		for(int k = 0; k < myFlies.Count; k++){
+			myFlies[k].GetComponent<FlyController>().teleport();
+		}
+	}
+
+	public void SetGhosts(FrogGhost[] ghosts){
+		this.ghosts = ghosts;
+	}
+
+	public void SetGhostDeathTouch(bool truth){
+		ghosts[0].SetDeathTouch(truth);
+		ghosts[1].SetDeathTouch(truth);
 	}
 }

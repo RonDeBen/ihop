@@ -9,8 +9,13 @@ public class FlyGhost : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		flySprender.flipX = shadowSprender.flipX;
-		gameObject.transform.position = shadowFly.transform.position + (Vector3.right * offset);
+		if(shadowFly != null){
+			flySprender.flipX = shadowSprender.flipX;
+			flySprender.sprite = shadowSprender.sprite;
+			gameObject.transform.position = shadowFly.transform.position + (Vector3.right * offset);
+		}else{
+			Destroy(gameObject);
+		}
 	}
 
 	public void SetShadowFly(GameObject shadowFly){

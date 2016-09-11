@@ -16,6 +16,7 @@ public class FrogGhost : MonoBehaviour {
 	private bool facingRight = true;
 	private bool isTonguing = false;
 	private bool tonguePressed = false;
+	private bool isDeathTouch = false;
 	private Player player;
 
 	private float tongueStartTime, tongueDeltaTime, maxTongueScale, timeToTongue, tongueTheta;
@@ -37,11 +38,13 @@ public class FrogGhost : MonoBehaviour {
 				facingRight = true;
 				tongueAnchor.transform.localPosition = Vector3.Scale(tongueAnchor.transform.localPosition, Vector3.left);
 			}
+			
 
 			gameObject.transform.position = realFrog.transform.position + (Vector3.right * offset);
 			ghostSprender.flipX = realSprender.flipX;
+			ghostSprender.sprite = realSprender.sprite;
 
-			if(tonguePressed && !isTonguing){
+			if(tonguePressed && !isTonguing && !isDeathTouch){
 				isTonguing = true;
 				tongueStartTime = Time.time;
 				tongueTheta = FC.GetTongueTheta();
@@ -101,5 +104,9 @@ public class FrogGhost : MonoBehaviour {
 
 	public void SetOffset(float offset){
 		this.offset = offset;
+	}
+
+	public void SetDeathTouch(bool truth){
+		isDeathTouch = truth;
 	}
 }

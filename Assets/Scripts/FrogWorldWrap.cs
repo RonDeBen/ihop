@@ -7,9 +7,12 @@ public class FrogWorldWrap : MonoBehaviour {
 
 	private GameObject[] ww;
 	private float screenHeight, screenWidth;
+	private FrogController FC;
 
 	// Use this for initialization
 	void Start () {
+		FC = gameObject.GetComponent<FrogController>();
+
 		screenHeight = 2f * Camera.main.orthographicSize;
 		screenWidth = screenHeight * Camera.main.aspect;
 		
@@ -26,13 +29,19 @@ public class FrogWorldWrap : MonoBehaviour {
 
 		//right ghost
 		ww[0] = Instantiate(wwObj, Vector3.zero, Quaternion.identity) as GameObject;
-		ww[0].GetComponent<FrogGhost>().SetRealFrog(gameObject);
-		ww[0].GetComponent<FrogGhost>().SetOffset(screenWidth);
+		FrogGhost ghost0 = ww[0].GetComponent<FrogGhost>();
+		ghost0.SetRealFrog(gameObject);
+		ghost0.SetOffset(screenWidth);
 
 		//left ghost
 		ww[1] = Instantiate(wwObj, Vector3.zero, Quaternion.identity) as GameObject;
-		ww[1].GetComponent<FrogGhost>().SetRealFrog(gameObject);
-		ww[1].GetComponent<FrogGhost>().SetOffset(-screenWidth);
+		FrogGhost ghost1 = ww[1].GetComponent<FrogGhost>();
+		ghost1.SetRealFrog(gameObject);
+		ghost1.SetOffset(-screenWidth);
+
+		FrogGhost[] ghosties = new FrogGhost[2]{ghost0, ghost1};
+
+		FC.SetGhosts(ghosties);
 
 		PositionShips();
 	}
@@ -46,6 +55,7 @@ public class FrogWorldWrap : MonoBehaviour {
 		foreach(GameObject ghost in ww){
 			if(ghost.transform.position.x < screenWidth && ghost.transform.position.x > 0.0f){
 				transform.position = ghost.transform.position;
+				FC.TeleportFlies();
 				PositionShips();
 			}
 		}

@@ -25,8 +25,9 @@ public class FlySpawner : MonoBehaviour {
 
 	public static void SpawnNewfly(){
 		Vector3 flyPosition = flyLocations[Random.Range(0, flyLocations.Length)];
-		GameObject go = Instantiate(fly, flyPosition, Quaternion.identity) as GameObject;
+		GameObject go = Instantiate(fly, Vector3.zero, Quaternion.identity) as GameObject;
 		GameObject UpAndDownGuy = GameObject.Find("UpAndDownGuy");
+		go.transform.localPosition = flyPosition;
 		go.transform.parent = UpAndDownGuy.transform;
 	}
 }

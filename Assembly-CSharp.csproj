@@ -92,6 +92,7 @@
      <Compile Include="Assets\Rewired\Internal\Scripts\InputManager.cs" />
      <Compile Include="Assets\Rewired\Internal\Scripts\Misc\ExternalTools.cs" />
      <Compile Include="Assets\Rewired\Internal\Scripts\Platforms\Ouya\OuyaInputSource.cs" />
+     <Compile Include="Assets\Scripts\CenterScreen.cs" />
      <Compile Include="Assets\Scripts\FlyController.cs" />
      <Compile Include="Assets\Scripts\FlyGhost.cs" />
      <Compile Include="Assets\Scripts\FlySpawner.cs" />
@@ -99,6 +100,7 @@
      <Compile Include="Assets\Scripts\FrogController.cs" />
      <Compile Include="Assets\Scripts\FrogGhost.cs" />
      <Compile Include="Assets\Scripts\FrogWorldWrap.cs" />
+     <Compile Include="Assets\Scripts\MusicMiddleware.cs" />
      <Compile Include="Assets\Scripts\TongueController.cs" />
      <None Include="Assets\Rewired\Documentation\licences.txt" />
      <None Include="Assets\Rewired\Documentation\ReadMe.txt" />

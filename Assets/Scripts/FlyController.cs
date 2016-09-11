@@ -3,6 +3,12 @@ using System.Collections;
 
 public class FlyController : MonoBehaviour {
 
+	public Sprite downSprite, middleSprite, upSprite;
+
+	public float timeToChange;
+	private float lastChange, animationDeltaTime;
+	private int queueNumber = 1;
+
 	public GameObject follow;
 	public int positionInLine = 0;
 	public float displacementBetweenFlies = 1; 
@@ -13,6 +19,7 @@ public class FlyController : MonoBehaviour {
 	private SpriteRenderer hostSprender, flySprender;
 	public int playerId = -1;
 	private GameObject host;
+	private bool goingDown = true;
 
 	// Use this for initialization
 	void Start () {
@@ -30,7 +37,37 @@ public class FlyController : MonoBehaviour {
 
 			flySprender.flipX = hostSprender.flipX;
 
-			leap();
+			if(isLeaping){
+				leap();
+			}
+		}
+		animate();
+	}
+
+	void animate(){
+		animationDeltaTime = Time.time - lastChange;
+		if(animationDeltaTime > timeToChange){
+			lastChange = Time.time;
+			switch (queueNumber){
+				case 0:
+					flySprender.sprite = upSprite;
+					queueNumber = 1;
+					goingDown = true;
+					break;
+				case 1:
+					flySprender.sprite = middleSprite;
+					if(goingDown){
+						queueNumber = 2;
+					}else{
+						queueNumber = 0;
+					}
+					break;
+				case 2:
+					flySprender.sprite = downSprite;
+					queueNumber = 1;
+					goingDown = false;
+					break;
+			}
 		}
 	}
 
@@ -48,6 +85,11 @@ public class FlyController : MonoBehaviour {
 		if(deltaTime/timeToReachFrog >= 1){
 			isLeaping = false;
 		}
+	}
+
+	public void teleport(){
+		transform.position = restingState();
+		isLeaping = false;
 	}
 
 	public void SwapHost(GameObject newHost){
