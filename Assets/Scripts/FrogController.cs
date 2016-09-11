@@ -5,9 +5,10 @@ using Rewired;
 
 public class FrogController : MonoBehaviour {
 
-	public GameObject groundCheckLeftObj, groundCheckRightObj, arrow, tongue, tongueAnchor;
+	public GameObject groundCheckLeftObj, groundCheckRightObj, arrow, tongue, tongueAnchor, arrowAnchor;
 	public float startForce, maxForce, timeToMax, timeToForceJump;
 	public float maxTongueScale, timeToTongue;
+	public int numberOfFliesForDeathTouch = 5;
 	private float chargeStartTime, jumpDeltaTime, x, y;
 	private float tongueStartTime, tongueDeltaTime;
 	private SpriteRenderer arrowSprender, frogSprender;
@@ -16,6 +17,8 @@ public class FrogController : MonoBehaviour {
 	private bool grounded = false;
 	private bool isCharging = false;
 	private bool isTounging = false;
+
+	private bool isDeathTouch = false;
 
 	private int numberOfFlies;
 	private List<GameObject> myFlies = new List<GameObject>();
@@ -102,7 +105,7 @@ public class FrogController : MonoBehaviour {
 			charging();
 		}
 
-		if(tonguePressed && !isTounging){
+		if(tonguePressed && !isTounging && !isDeathTouch && !isCharging){
 			isTounging = true;
 			tongueStartTime = Time.time;
 			tongue.GetComponent<SpriteRenderer>().enabled = true;
@@ -120,6 +123,22 @@ public class FrogController : MonoBehaviour {
 		jumpDeltaTime = Time.time - chargeStartTime;
 		float scaleIncrease = Mathf.Lerp(1.0f, 2.0f, Mathf.Clamp(jumpDeltaTime/timeToMax, 0, 1));
 		arrow.transform.localScale = arrowScale * scaleIncrease;
+
+		float arrowX = 0.0f;
+		float arrowY = 0.0f;
+		float halfArrowLength = 0.0f;
+
+		if(arrowSprender.bounds.size.x > arrowSprender.bounds.size.y){
+			halfArrowLength = (arrowSprender.bounds.size.x / 2.0f);
+		}else{
+			halfArrowLength = (arrowSprender.bounds.size.y / 2.0f);
+		}
+
+		arrowX = moveVector.x*halfArrowLength;
+		arrowY = moveVector.y*halfArrowLength;
+
+		arrow.transform.position = (arrowAnchor.transform.position + new Vector3(arrowX, arrowY, 0.0f));
+
 		tongueTheta = (Mathf.Atan2(moveVector.y, moveVector.x) * Mathf.Rad2Deg);
 		arrow.transform.eulerAngles = new Vector3(0.0f, 0.0f, tongueTheta);
 	}
@@ -159,14 +178,50 @@ public class FrogController : MonoBehaviour {
 		}
 	}
 
+	public void EnterDeathTouch(){
+		gameObject.layer = LayerMask.NameToLayer("death touch");
+		isDeathTouch = true;
+		frogSprender.color = new Color(153, 50, 204, 255);
+		//change to whatever animation thing
+	}
+
+	public void ExitDeathTouch(){
+		gameObject.layer = LayerMask.NameToLayer("frog");
+		isDeathTouch = false;
+		frogSprender.color = Color.white;
+		//go back to whatever animation thing
+	}
+
+	void OnCollisionEnter2D(Collision2D other){
+		if(isDeathTouch && other.gameObject.tag.Equals("Frog")){
+			other.gameObject.GetComponent<FrogController>().DestroyAllFlies();
+			Destroy(other.gameObject);
+			DestroyAllFlies();
+			ExitDeathTouch();
+		}
+	}
+
+	public void DestroyAllFlies(){
+		for(int k = myFlies.Count - 1; k >= 0; k--){
+			Destroy(myFlies[k]);
+			myFlies.RemoveAt(myFlies.Count - 1);
+		}
+	}
+
 	public void GainFly(GameObject fly){
 		fly.GetComponent<FlyController>().SwapHost(gameObject);
 		myFlies.Add(fly);
+		if(myFlies.Count == numberOfFliesForDeathTouch){
+			EnterDeathTouch();
+		}
 	}
 
 	public void LoseFly(int position){
 		myFlies.RemoveAt(position);
 		ReorderFlies();
+		if(isDeathTouch && myFlies.Count < numberOfFliesForDeathTouch){
+			ExitDeathTouch();
+		}
 	}
 
 	void ReorderFlies(){
