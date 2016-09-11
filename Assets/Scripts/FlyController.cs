@@ -68,12 +68,6 @@ public class FlyController : MonoBehaviour {
 		follow = newTarget;
 	}
 
-	void OnCollisionEnter2D(Collision2D coll){
-		if (coll.gameObject.tag == "Tongue"){
-			coll.gameObject.GetComponent<TongueController>();
-		}
-	}
-
 	public void SetPosition(int position){
 		positionInLine = position;
 	}

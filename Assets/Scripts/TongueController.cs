@@ -21,9 +21,16 @@ public class TongueController : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D coll){
 		if(coll.gameObject.tag=="Fly"){
 			FlyController FlyC = coll.gameObject.GetComponent<FlyController>();
-			if(FlyC.GetPlayerId() != playerId){
-				if(!JustAte){
+			if(FlyC != null){
+				if(FlyC.GetPlayerId() != playerId && !JustAte){
 					FC.GainFly(coll.gameObject);
+					JustAte = true;
+					startTime = Time.time;
+				}
+			}else{//hit a shadow fly
+				FlyGhost FG = coll.gameObject.GetComponent<FlyGhost>();
+				if(FG.GetPlayerId() != playerId && !JustAte){
+					FC.GainFly(FG.GetShadowFly());
 					JustAte = true;
 					startTime = Time.time;
 				}

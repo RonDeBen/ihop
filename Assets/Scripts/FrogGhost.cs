@@ -8,7 +8,7 @@ public class FrogGhost : MonoBehaviour {
 
 	private GameObject realFrog;
 	private float offset;
-	private Rigidbody2D realRB, ghostRB;
+	private Rigidbody2D realRB;
 	private SpriteRenderer realSprender, ghostSprender, tongueSprender;
 	private FrogController FC;
 	private BoxCollider2D tongueBoxCollider;
@@ -60,7 +60,6 @@ public class FrogGhost : MonoBehaviour {
 		// gameObject.transform.localScale = realFrog.transform.localScale;
 
 		realRB = realFrog.GetComponent<Rigidbody2D>();
-		ghostRB = gameObject.GetComponent<Rigidbody2D>();
 
 		realSprender = realFrog.GetComponent<SpriteRenderer>();
 		ghostSprender = gameObject.GetComponent<SpriteRenderer>();
